@@ -5,10 +5,6 @@ import {
   PlusCircle,
   History,
   Send,
-  AlertCircle,
-  CheckCircle2,
-  Calendar,
-  Filter,
   CheckCheck,
   TrendingDown,
   TrendingUp,
@@ -68,7 +64,6 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
     setSuccessNotice(`Logged ${parsedYield}L for Cow #${selectedCow.tagNumber}. SMS notification sent to ${phoneOverride}!`);
     setTimeout(() => setSuccessNotice(null), 5000);
 
-    // Reset notes and yield
     setOperatorNotes('');
   };
 
@@ -87,33 +82,33 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="bg-[#121a16] border border-[#23332b] rounded-xl p-5">
+      <div className="bg-white dark:bg-[#121a16] border border-neutral-200 dark:border-[#23332b] rounded-xl p-5 transition-colors shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-400">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
               <Droplets className="w-4 h-4" />
               <span>Milking Parlor Intake & History</span>
-              <span className="text-neutral-500">·</span>
-              <span className="text-neutral-400">Mobile SMS Sync</span>
+              <span className="text-neutral-400 dark:text-neutral-500">·</span>
+              <span className="text-neutral-600 dark:text-neutral-400">Mobile SMS Sync</span>
             </div>
-            <h2 className="text-xl font-bold text-white mt-1">
+            <h2 className="text-xl font-bold text-neutral-900 dark:text-white mt-1">
               Dairy Milk Tracker & Farmer Notification Dispatcher
             </h2>
-            <p className="text-xs text-neutral-400 mt-1 max-w-2xl leading-relaxed">
+            <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1 max-w-2xl leading-relaxed">
               Log milk yield manually per session (morning, afternoon, evening). Every submission updates the cow's 14-day rolling performance and dispatches an automated SMS alert directly to the farmer's mobile number.
             </p>
           </div>
 
-          <div className="flex items-center gap-4 bg-[#0a0f0d] px-4 py-2.5 rounded-xl border border-[#23332b]">
+          <div className="flex items-center gap-4 bg-neutral-50 dark:bg-[#0a0f0d] px-4 py-2.5 rounded-xl border border-neutral-200 dark:border-[#23332b]">
             <div>
-              <div className="text-[10px] uppercase text-neutral-400">Total Logged Today</div>
-              <div className="text-lg font-bold text-emerald-400 font-mono-numbers">
+              <div className="text-[10px] uppercase text-neutral-500 dark:text-neutral-400">Total Logged Today</div>
+              <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400 font-mono-numbers">
                 {totalYieldToday.toFixed(1)} L
               </div>
             </div>
-            <div className="border-l border-[#23332b] pl-4">
-              <div className="text-[10px] uppercase text-neutral-400">History Records</div>
-              <div className="text-lg font-bold text-white font-mono-numbers">
+            <div className="border-l border-neutral-200 dark:border-[#23332b] pl-4">
+              <div className="text-[10px] uppercase text-neutral-500 dark:text-neutral-400">History Records</div>
+              <div className="text-lg font-bold text-neutral-900 dark:text-white font-mono-numbers">
                 {milkRecords.length}
               </div>
             </div>
@@ -122,34 +117,34 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
       </div>
 
       {successNotice && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/70 border border-emerald-700 text-xs text-emerald-300 flex items-center justify-between">
+        <div className="p-3.5 rounded-xl bg-emerald-100 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-700 text-xs text-emerald-900 dark:text-emerald-300 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CheckCheck className="w-4 h-4 text-emerald-400" />
+            <CheckCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>{successNotice}</span>
           </div>
-          <span className="font-mono-numbers text-emerald-400 text-[11px]">Carrier ACK: OK</span>
+          <span className="font-mono-numbers text-emerald-700 dark:text-emerald-400 text-[11px]">Carrier ACK: OK</span>
         </div>
       )}
 
       {/* Main Grid: Form (5 cols) + History (7 cols) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Manual Typing Form */}
-        <div className="lg:col-span-5 bg-[#121a16] border border-[#23332b] rounded-xl p-5 space-y-4">
-          <div className="flex items-center gap-2 pb-3 border-b border-[#23332b]">
-            <PlusCircle className="w-4 h-4 text-emerald-400" />
-            <h3 className="text-sm font-bold text-white">Manual Milk Production Entry</h3>
+        <div className="lg:col-span-5 bg-white dark:bg-[#121a16] border border-neutral-200 dark:border-[#23332b] rounded-xl p-5 space-y-4 transition-colors shadow-sm">
+          <div className="flex items-center gap-2 pb-3 border-b border-neutral-200 dark:border-[#23332b]">
+            <PlusCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <h3 className="text-sm font-bold text-neutral-900 dark:text-white">Manual Milk Production Entry</h3>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Cow selector */}
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                 Select Cow (Ear Tag ID)
               </label>
               <select
                 value={selectedCowId}
                 onChange={(e) => setSelectedCowId(e.target.value)}
-                className="w-full bg-[#0a0f0d] border border-[#273a30] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-500 font-mono-numbers"
+                className="w-full bg-neutral-50 dark:bg-[#0a0f0d] border border-neutral-300 dark:border-[#273a30] rounded-lg px-3 py-2 text-sm text-neutral-900 dark:text-white focus:outline-none focus:border-emerald-500 font-mono-numbers"
               >
                 {cows.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -159,9 +154,9 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
               </select>
 
               {selectedCow && (
-                <div className="mt-2 p-2 rounded-lg bg-[#0c120f] border border-[#223329] text-[11px] text-neutral-400 flex items-center justify-between">
+                <div className="mt-2 p-2 rounded-lg bg-neutral-50 dark:bg-[#0c120f] border border-neutral-200 dark:border-[#223329] text-[11px] text-neutral-600 dark:text-neutral-400 flex items-center justify-between">
                   <span>14-Day Expected Yield:</span>
-                  <span className="text-emerald-400 font-bold font-mono-numbers">
+                  <span className="text-emerald-700 dark:text-emerald-400 font-bold font-mono-numbers">
                     {selectedCow.baseline.milkYieldMean} L/day (±{selectedCow.baseline.milkYieldStd}L)
                   </span>
                 </div>
@@ -170,7 +165,7 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
 
             {/* Session selector */}
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                 Milking Session
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -181,8 +176,8 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
                     onClick={() => setSession(s)}
                     className={`py-2 text-xs font-medium rounded-lg capitalize transition-colors cursor-pointer ${
                       session === s
-                        ? 'bg-emerald-800 text-white border border-emerald-600'
-                        : 'bg-[#0a0f0d] text-neutral-400 border border-[#273a30] hover:text-white'
+                        ? 'bg-emerald-600 dark:bg-emerald-800 text-white border border-emerald-600 dark:border-emerald-600'
+                        : 'bg-neutral-50 dark:bg-[#0a0f0d] text-neutral-700 dark:text-neutral-400 border border-neutral-200 dark:border-[#273a30] hover:text-neutral-900 dark:hover:text-white'
                     }`}
                   >
                     {s}
@@ -193,7 +188,7 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
 
             {/* Milk Yield input */}
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1 flex items-center justify-between">
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1 flex items-center justify-between">
                 <span>Session Milk Yield (Liters)</span>
                 <span className="text-[11px] text-neutral-500">Typical: 12 - 20 L</span>
               </label>
@@ -207,7 +202,7 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
                   onChange={(e) => setYieldLiters(e.target.value)}
                   placeholder="e.g. 16.5"
                   required
-                  className="w-full bg-[#0a0f0d] border border-[#273a30] rounded-lg px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500 font-mono-numbers text-base font-bold"
+                  className="w-full bg-neutral-50 dark:bg-[#0a0f0d] border border-neutral-300 dark:border-[#273a30] rounded-lg px-3 py-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-emerald-500 font-mono-numbers text-base font-bold"
                 />
                 <span className="absolute right-3 top-2.5 text-xs text-neutral-500 font-mono-numbers">
                   Liters
@@ -218,7 +213,7 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
             {/* Fat and Protein */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">
+                <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Fat Content (%)
                 </label>
                 <input
@@ -229,12 +224,12 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
                   value={fatPercentage}
                   onChange={(e) => setFatPercentage(e.target.value)}
                   placeholder="3.8"
-                  className="w-full bg-[#0a0f0d] border border-[#273a30] rounded-lg px-3 py-2 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500 font-mono-numbers"
+                  className="w-full bg-neutral-50 dark:bg-[#0a0f0d] border border-neutral-300 dark:border-[#273a30] rounded-lg px-3 py-2 text-xs text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-emerald-500 font-mono-numbers"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">
+                <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Protein Content (%)
                 </label>
                 <input
@@ -245,14 +240,14 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
                   value={proteinPercentage}
                   onChange={(e) => setProteinPercentage(e.target.value)}
                   placeholder="3.2"
-                  className="w-full bg-[#0a0f0d] border border-[#273a30] rounded-lg px-3 py-2 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500 font-mono-numbers"
+                  className="w-full bg-neutral-50 dark:bg-[#0a0f0d] border border-neutral-300 dark:border-[#273a30] rounded-lg px-3 py-2 text-xs text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-emerald-500 font-mono-numbers"
                 />
               </div>
             </div>
 
             {/* Operator Notes */}
             <div>
-              <label className="block text-xs font-medium text-neutral-300 mb-1">
+              <label className="block text-xs font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                 Milking Notes / Teat Condition (Optional)
               </label>
               <textarea
@@ -260,34 +255,34 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
                 onChange={(e) => setOperatorNotes(e.target.value)}
                 placeholder="e.g. Normal milk flow, teat preparation clean..."
                 rows={2}
-                className="w-full bg-[#0a0f0d] border border-[#273a30] rounded-lg p-2.5 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500"
+                className="w-full bg-neutral-50 dark:bg-[#0a0f0d] border border-neutral-300 dark:border-[#273a30] rounded-lg p-2.5 text-xs text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-emerald-500"
               />
             </div>
 
-            {/* Mobile SMS Notification Dispatcher (Feature 5) */}
-            <div className="p-3 rounded-lg bg-[#0d1612] border border-[#24372c] space-y-2.5">
+            {/* Mobile SMS Notification Dispatcher */}
+            <div className="p-3 rounded-lg bg-emerald-50/80 dark:bg-[#0d1612] border border-emerald-200 dark:border-[#24372c] space-y-2.5">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={sendSms}
                   onChange={(e) => setSendSms(e.target.checked)}
-                  className="rounded border-[#2f4237] text-emerald-600 focus:ring-0"
+                  className="rounded border-neutral-300 dark:border-[#2f4237] text-emerald-600 focus:ring-0"
                 />
-                <span className="text-xs font-semibold text-emerald-300">
+                <span className="text-xs font-semibold text-emerald-800 dark:text-emerald-300">
                   Send Mobile SMS Notification on Save
                 </span>
               </label>
 
               {sendSms && (
                 <div>
-                  <label className="block text-[11px] text-neutral-400 mb-1">
+                  <label className="block text-[11px] text-neutral-600 dark:text-neutral-400 mb-1">
                     Farmer Mobile Number:
                   </label>
                   <input
                     type="tel"
                     value={phoneOverride}
                     onChange={(e) => setPhoneOverride(e.target.value)}
-                    className="w-full bg-[#080d0b] border border-[#25392d] rounded-md px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500 font-mono-numbers"
+                    className="w-full bg-white dark:bg-[#080d0b] border border-neutral-300 dark:border-[#25392d] rounded-md px-2.5 py-1.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-emerald-500 font-mono-numbers"
                   />
                   <p className="text-[10px] text-neutral-500 mt-1">
                     Sends instantaneous production update with baseline comparison and risk analysis.
@@ -298,7 +293,7 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
 
             <button
               type="submit"
-              className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-950/40"
+              className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-xs transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm"
             >
               <Send className="w-3.5 h-3.5" /> Save Milk Record & Dispatch Notification
             </button>
@@ -306,11 +301,11 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
         </div>
 
         {/* Previous Milk Production History (7 cols) */}
-        <div className="lg:col-span-7 bg-[#121a16] border border-[#23332b] rounded-xl p-5 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#23332b]">
+        <div className="lg:col-span-7 bg-white dark:bg-[#121a16] border border-neutral-200 dark:border-[#23332b] rounded-xl p-5 space-y-4 transition-colors shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-neutral-200 dark:border-[#23332b]">
             <div className="flex items-center gap-2">
-              <History className="w-4 h-4 text-emerald-400" />
-              <h3 className="text-sm font-bold text-white">Previous Milk Production History</h3>
+              <History className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <h3 className="text-sm font-bold text-neutral-900 dark:text-white">Previous Milk Production History</h3>
             </div>
 
             {/* Filters */}
@@ -318,7 +313,7 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
               <select
                 value={filterCowTag}
                 onChange={(e) => setFilterCowTag(e.target.value)}
-                className="bg-[#0a0f0d] border border-[#273a30] rounded-md px-2.5 py-1 text-xs text-neutral-300 focus:outline-none"
+                className="bg-neutral-50 dark:bg-[#0a0f0d] border border-neutral-300 dark:border-[#273a30] rounded-md px-2.5 py-1 text-xs text-neutral-800 dark:text-neutral-300 focus:outline-none"
               >
                 <option value="all">All Cows</option>
                 {cows.map((c) => (
@@ -331,7 +326,7 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
               <select
                 value={filterSession}
                 onChange={(e) => setFilterSession(e.target.value)}
-                className="bg-[#0a0f0d] border border-[#273a30] rounded-md px-2.5 py-1 text-xs text-neutral-300 focus:outline-none"
+                className="bg-neutral-50 dark:bg-[#0a0f0d] border border-neutral-300 dark:border-[#273a30] rounded-md px-2.5 py-1 text-xs text-neutral-800 dark:text-neutral-300 focus:outline-none"
               >
                 <option value="all">All Sessions</option>
                 <option value="morning">Morning</option>
@@ -344,7 +339,7 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
           {/* Table */}
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#0a0f0d] text-neutral-400 uppercase tracking-wider text-[10px] border-b border-[#23332b]">
+              <thead className="bg-neutral-50 dark:bg-[#0a0f0d] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider text-[10px] border-b border-neutral-200 dark:border-[#23332b]">
                 <tr>
                   <th className="py-2.5 px-3">Date / Time</th>
                   <th className="py-2.5 px-3">Cow</th>
@@ -354,30 +349,30 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
                   <th className="py-2.5 px-3">SMS Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#202e26]">
+              <tbody className="divide-y divide-neutral-200 dark:divide-[#202e26]">
                 {filteredRecords.map((rec) => {
                   return (
-                    <tr key={rec.id} className="hover:bg-[#18231d]/60 transition-colors">
-                      <td className="py-2.5 px-3 text-neutral-300 font-mono-numbers whitespace-nowrap">
+                    <tr key={rec.id} className="hover:bg-neutral-50 dark:hover:bg-[#18231d]/60 transition-colors">
+                      <td className="py-2.5 px-3 text-neutral-700 dark:text-neutral-300 font-mono-numbers whitespace-nowrap">
                         <div>{rec.date}</div>
                         <div className="text-[10px] text-neutral-500">{rec.timestamp}</div>
                       </td>
-                      <td className="py-2.5 px-3 font-semibold text-white whitespace-nowrap">
+                      <td className="py-2.5 px-3 font-semibold text-neutral-900 dark:text-white whitespace-nowrap">
                         Cow #{rec.tagNumber}
-                        <div className="text-[10px] font-normal text-neutral-400">{rec.cowName}</div>
+                        <div className="text-[10px] font-normal text-neutral-500 dark:text-neutral-400">{rec.cowName}</div>
                       </td>
-                      <td className="py-2.5 px-3 capitalize text-neutral-300 whitespace-nowrap">
+                      <td className="py-2.5 px-3 capitalize text-neutral-700 dark:text-neutral-300 whitespace-nowrap">
                         {rec.session}
                       </td>
                       <td className="py-2.5 px-3 text-right font-mono-numbers whitespace-nowrap">
-                        <span className="font-bold text-white">{rec.yieldLiters} L</span>
+                        <span className="font-bold text-neutral-900 dark:text-white">{rec.yieldLiters} L</span>
                         <div
                           className={`text-[10px] flex items-center justify-end gap-0.5 ${
                             rec.varianceFromBaselinePercent < -10
-                              ? 'text-rose-400'
+                              ? 'text-rose-600 dark:text-rose-400'
                               : rec.varianceFromBaselinePercent > 5
-                              ? 'text-emerald-400'
-                              : 'text-neutral-400'
+                              ? 'text-emerald-600 dark:text-emerald-400'
+                              : 'text-neutral-500 dark:text-neutral-400'
                           }`}
                         >
                           {rec.varianceFromBaselinePercent < 0 ? (
@@ -389,13 +384,13 @@ export const MilkTracker: React.FC<MilkTrackerProps> = ({
                           {rec.varianceFromBaselinePercent}%
                         </div>
                       </td>
-                      <td className="py-2.5 px-3 text-right text-neutral-400 font-mono-numbers whitespace-nowrap">
+                      <td className="py-2.5 px-3 text-right text-neutral-500 dark:text-neutral-400 font-mono-numbers whitespace-nowrap">
                         {rec.fatPercentage ? `${rec.fatPercentage}%` : '-'} /{' '}
                         {rec.proteinPercentage ? `${rec.proteinPercentage}%` : '-'}
                       </td>
                       <td className="py-2.5 px-3 whitespace-nowrap">
                         {rec.smsSent ? (
-                          <div className="flex items-center gap-1 text-[11px] text-emerald-400 font-mono-numbers">
+                          <div className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-mono-numbers">
                             <CheckCheck className="w-3.5 h-3.5" /> Sent
                           </div>
                         ) : (

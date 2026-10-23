@@ -1,0 +1,91 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Registered dairy farmer or veterinarian user profile",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "email": { "type": "string", "format": "email", "description": "User email address" },
+        "displayName": { "type": "string", "description": "User display name" },
+        "photoURL": { "type": "string", "description": "User avatar URL" },
+        "farmName": { "type": "string", "description": "Dairy farm name" },
+        "phone": { "type": "string", "description": "Mobile phone for SMS alerts" },
+        "role": { "type": "string", "enum": ["owner", "veterinarian", "manager"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "Cow": {
+      "title": "Cow",
+      "description": "Cattle livestock record in the herd directory",
+      "type": "object",
+      "properties": {
+        "tagNumber": { "type": "string", "description": "Unique ear tag ID e.g. 0412" },
+        "name": { "type": "string", "description": "Cow name e.g. Bella" },
+        "breed": { "type": "string", "enum": ["Holstein-Friesian", "Jersey", "Brown Swiss", "Guernsey", "Ayrshire"] },
+        "ageYears": { "type": "number", "description": "Age in years" },
+        "lactationStage": { "type": "string", "enum": ["Early Lactation", "Mid Lactation", "Late Lactation", "Dry Period"] },
+        "baselineYieldKg": { "type": "number", "description": "Historical 7-day average milk yield in kg" },
+        "currentYieldKg": { "type": "number", "description": "Today's recorded milk yield in kg" },
+        "feedingMinutes": { "type": "number", "description": "Daily feed bunk duration in minutes" },
+        "ruminationMinutes": { "type": "number", "description": "Daily rumination time in minutes" },
+        "chewRate": { "type": "number", "description": "Chewing rate in chews/min" },
+        "activityState": { "type": "string", "enum": ["feeding", "resting", "stationary", "moving"] },
+        "riskLevel": { "type": "string", "enum": ["low", "moderate", "high", "critical"] },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["tagNumber", "name", "breed", "baselineYieldKg", "currentYieldKg"]
+    },
+    "MilkRecord": {
+      "title": "MilkRecord",
+      "description": "Daily milk production log entry for a cow",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "cowTag": { "type": "string", "description": "Associated cow tag number" },
+        "yieldKg": { "type": "number", "description": "Milk yield in kg" },
+        "session": { "type": "string", "enum": ["morning", "evening", "night"] },
+        "timestamp": { "type": "string" },
+        "loggedBy": { "type": "string", "description": "User UID who logged the yield" }
+      },
+      "required": ["cowTag", "yieldKg", "session", "timestamp"]
+    },
+    "HealthAlert": {
+      "title": "HealthAlert",
+      "description": "Automated livestock early warning alert record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "cowTag": { "type": "string" },
+        "cowName": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "severity": { "type": "string", "enum": ["low", "moderate", "high", "critical"] },
+        "recipientPhone": { "type": "string" },
+        "status": { "type": "string", "enum": ["sent", "ready_for_device", "failed", "duplicate_suppressed"] },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["cowTag", "title", "message", "severity", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Authenticated farmer and vet profiles"
+    },
+    "/cows/{cowTag}": {
+      "schema": { "$ref": "#/entities/Cow" },
+      "description": "Herd directory cattle records"
+    },
+    "/cows/{cowTag}/milkRecords/{recordId}": {
+      "schema": { "$ref": "#/entities/MilkRecord" },
+      "description": "Milk production history subcollection per cow"
+    },
+    "/alerts/{alertId}": {
+      "schema": { "$ref": "#/entities/HealthAlert" },
+      "description": "Automated SMS health alert logs"
+    }
+  }
+}

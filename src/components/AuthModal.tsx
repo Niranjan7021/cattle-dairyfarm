@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, Lock, Phone, User as UserIcon, Building2, CheckCircle2, ShieldCheck, MessageSquare, AlertTriangle } from 'lucide-react';
+import { X, Lock, User as UserIcon, Building2, CheckCircle2, ShieldCheck, MessageSquare, AlertTriangle } from 'lucide-react';
 import { User } from '../types';
+import { PhoneInputWithCountry } from './PhoneInputWithCountry';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -24,15 +25,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const [tab, setTab] = useState<'login' | 'register'>(initialTab);
   
-  // Login form state (empty defaults)
-  const [loginPhone, setLoginPhone] = useState('');
+  // Login form state
+  const [loginPhone, setLoginPhone] = useState('+91 ');
   const [loginPassword, setLoginPassword] = useState('');
 
-  // Register form state (name, organization, password, phone number)
+  // Register form state
   const [regName, setRegName] = useState('');
   const [regOrg, setRegOrg] = useState('');
   const [regPassword, setRegPassword] = useState('');
-  const [regPhone, setRegPhone] = useState('');
+  const [regPhone, setRegPhone] = useState('+91 ');
 
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -125,7 +126,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     const formattedPhone = trimmedPhone.startsWith('+') ? trimmedPhone : `+1 ${trimmedPhone}`;
 
-    // Store account
     const accounts = getStoredAccounts();
     const existingIndex = accounts.findIndex(
       (a) => a.phone.replace(/\D/g, '') === formattedPhone.replace(/\D/g, '')
@@ -150,45 +150,42 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       console.error(err);
     }
 
-    // Clear registration fields
     setRegName('');
     setRegOrg('');
     setRegPassword('');
     setRegPhone('');
 
-    // Pre-fill login
     setLoginPhone(formattedPhone);
     setLoginPassword('');
 
-    // Switch to login tab and show success message
     setSuccessMessage(`Registration successful for ${trimmedName}! Please sign in with your phone number and password.`);
     setTab('login');
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="bg-[#121a16] border border-[#273a30] text-neutral-100 rounded-2xl max-w-md w-full overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+      <div className="bg-white dark:bg-[#121a16] border border-neutral-200 dark:border-[#273a30] text-neutral-900 dark:text-neutral-100 rounded-2xl max-w-md w-full overflow-hidden shadow-2xl transition-colors">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#23332b] flex items-center justify-between">
+        <div className="px-6 py-4 border-b border-neutral-200 dark:border-[#23332b] flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-700/50 flex items-center justify-center text-emerald-400">
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950 border border-emerald-300 dark:border-emerald-700/50 flex items-center justify-center text-emerald-700 dark:text-emerald-400">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-white">HerdSentinel Access</h2>
-              <p className="text-xs text-neutral-400">Dairy early-warning monitoring system</p>
+              <h2 className="text-base font-semibold text-neutral-900 dark:text-white">HerdSentinel Access</h2>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400">Dairy early-warning monitoring system</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-neutral-400 hover:text-white p-1 rounded-lg hover:bg-[#1f2d26] transition-colors"
+            className="text-neutral-400 hover:text-neutral-900 dark:hover:text-white p-1 rounded-lg hover:bg-neutral-100 dark:hover:bg-[#1f2d26] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tab switch */}
-        <div className="flex border-b border-[#23332b] bg-[#0c120f]">
+        <div className="flex border-b border-neutral-200 dark:border-[#23332b] bg-neutral-100 dark:bg-[#0c120f]">
           <button
             type="button"
             onClick={() => {
@@ -197,8 +194,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             }}
             className={`flex-1 py-3 text-sm font-semibold transition-colors cursor-pointer border-b-2 ${
               tab === 'register'
-                ? 'text-emerald-400 border-emerald-500 bg-[#141f1a]'
-                : 'text-neutral-400 border-transparent hover:text-neutral-200'
+                ? 'text-emerald-700 dark:text-emerald-400 border-emerald-600 dark:border-emerald-500 bg-white dark:bg-[#141f1a]'
+                : 'text-neutral-500 dark:text-neutral-400 border-transparent hover:text-neutral-900 dark:hover:text-neutral-200'
             }`}
           >
             Register Page
@@ -211,8 +208,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             }}
             className={`flex-1 py-3 text-sm font-semibold transition-colors cursor-pointer border-b-2 ${
               tab === 'login'
-                ? 'text-emerald-400 border-emerald-500 bg-[#141f1a]'
-                : 'text-neutral-400 border-transparent hover:text-neutral-200'
+                ? 'text-emerald-700 dark:text-emerald-400 border-emerald-600 dark:border-emerald-500 bg-white dark:bg-[#141f1a]'
+                : 'text-neutral-500 dark:text-neutral-400 border-transparent hover:text-neutral-900 dark:hover:text-neutral-200'
             }`}
           >
             Login Page
@@ -222,47 +219,37 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {/* Content body */}
         <div className="p-6">
           {successMessage && (
-            <div className="mb-4 p-3 rounded-lg bg-emerald-950/80 border border-emerald-600 text-xs text-emerald-300 flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+            <div className="mb-4 p-3 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-600 text-xs text-emerald-900 dark:text-emerald-300 flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
               <span>{successMessage}</span>
             </div>
           )}
 
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-rose-950/60 border border-rose-800 text-xs text-rose-300 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+            <div className="mb-4 p-3 rounded-lg bg-rose-100 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-800 text-xs text-rose-900 dark:text-rose-300 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {tab === 'login' ? (
             <form onSubmit={handleLoginSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1.5">
-                  Phone Number
-                </label>
-                <div className="relative">
-                  <Phone className="w-4 h-4 text-emerald-500 absolute left-3 top-3" />
-                  <input
-                    type="tel"
-                    value={loginPhone}
-                    onChange={(e) => {
-                      setLoginPhone(e.target.value);
-                      setSuccessMessage(null);
-                    }}
-                    placeholder="+1 (555) 000-0000"
-                    required
-                    className="w-full bg-[#0a0f0d] border border-[#273a30] rounded-lg pl-10 pr-3 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500 font-mono-numbers"
-                  />
-                </div>
-              </div>
+              <PhoneInputWithCountry
+                label="Owner Mobile Phone Number"
+                value={loginPhone}
+                onChange={(val) => {
+                  setLoginPhone(val);
+                  setSuccessMessage(null);
+                }}
+                required
+              />
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1.5">
+                <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-1.5">
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-emerald-500 absolute left-3 top-3" />
+                  <Lock className="w-4 h-4 text-emerald-600 dark:text-emerald-500 absolute left-3 top-3" />
                   <input
                     type="password"
                     value={loginPassword}
@@ -272,14 +259,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     }}
                     placeholder="Enter your password"
                     required
-                    className="w-full bg-[#0a0f0d] border border-[#273a30] rounded-lg pl-10 pr-3 py-2.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-neutral-50 dark:bg-[#0a0f0d] border border-neutral-300 dark:border-[#273a30] rounded-lg pl-10 pr-3 py-2.5 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold text-sm transition-colors cursor-pointer shadow-lg shadow-emerald-950/40"
+                className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-sm transition-colors cursor-pointer shadow-sm"
               >
                 Sign In to Farm Dashboard
               </button>
@@ -287,75 +274,65 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           ) : (
             <form onSubmit={handleRegisterSubmit} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
                   1. Name
                 </label>
                 <div className="relative">
-                  <UserIcon className="w-4 h-4 text-emerald-500 absolute left-3 top-2.5" />
+                  <UserIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-500 absolute left-3 top-2.5" />
                   <input
                     type="text"
                     value={regName}
                     onChange={(e) => setRegName(e.target.value)}
                     placeholder="Full Name"
                     required
-                    className="w-full bg-[#0a0f0d] border border-[#273a30] rounded-lg pl-10 pr-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-neutral-50 dark:bg-[#0a0f0d] border border-neutral-300 dark:border-[#273a30] rounded-lg pl-10 pr-3 py-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
                   2. Organization
                 </label>
                 <div className="relative">
-                  <Building2 className="w-4 h-4 text-emerald-500 absolute left-3 top-2.5" />
+                  <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-500 absolute left-3 top-2.5" />
                   <input
                     type="text"
                     value={regOrg}
                     onChange={(e) => setRegOrg(e.target.value)}
                     placeholder="Dairy Farm Name"
                     required
-                    className="w-full bg-[#0a0f0d] border border-[#273a30] rounded-lg pl-10 pr-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-neutral-50 dark:bg-[#0a0f0d] border border-neutral-300 dark:border-[#273a30] rounded-lg pl-10 pr-3 py-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-1">
                   3. Password
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-emerald-500 absolute left-3 top-2.5" />
+                  <Lock className="w-4 h-4 text-emerald-600 dark:text-emerald-500 absolute left-3 top-2.5" />
                   <input
                     type="password"
                     value={regPassword}
                     onChange={(e) => setRegPassword(e.target.value)}
                     placeholder="Create a password"
                     required
-                    className="w-full bg-[#0a0f0d] border border-[#273a30] rounded-lg pl-10 pr-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-neutral-50 dark:bg-[#0a0f0d] border border-neutral-300 dark:border-[#273a30] rounded-lg pl-10 pr-3 py-2 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-neutral-300 uppercase tracking-wider mb-1">
-                  4. Phone Number
-                </label>
-                <div className="relative">
-                  <Phone className="w-4 h-4 text-emerald-500 absolute left-3 top-2.5" />
-                  <input
-                    type="tel"
-                    value={regPhone}
-                    onChange={(e) => setRegPhone(e.target.value)}
-                    placeholder="+1 (555) 000-0000"
-                    required
-                    className="w-full bg-[#0a0f0d] border border-[#273a30] rounded-lg pl-10 pr-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500 font-mono-numbers"
-                  />
-                </div>
-              </div>
+              <PhoneInputWithCountry
+                label="4. Mobile Phone Number (All Countries)"
+                value={regPhone}
+                onChange={(val) => setRegPhone(val)}
+                required
+              />
 
-              <div className="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-800/40 text-[11px] text-emerald-300 flex items-start gap-2">
-                <MessageSquare className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+              <div className="p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/40 text-[11px] text-emerald-900 dark:text-emerald-300 flex items-start gap-2">
+                <MessageSquare className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                 <span>
                   When any cow is affected, an automated SMS alert will be dispatched to this mobile number.
                 </span>
@@ -363,7 +340,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
               <button
                 type="submit"
-                className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold text-sm transition-colors cursor-pointer mt-2"
+                className="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-sm transition-colors cursor-pointer mt-2"
               >
                 Register Account
               </button>

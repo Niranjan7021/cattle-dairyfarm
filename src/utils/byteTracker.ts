@@ -58,17 +58,100 @@ export const INITIAL_BARN_COWS: Array<{
   { tagNumber: '1455', name: 'Hazel', baseX: 0.04, baseY: 0.62, baseW: 0.12, baseH: 0.29, initialActivity: 'feeding', color: '#f43f5e', signature: 'holstein_p1455' },
 ];
 
+export function convertBoxToRect(box: any): { x: number; y: number; w: number; h: number } {
+  if (!box) return { x: 0.1, y: 0.1, w: 0.12, h: 0.25 };
+
+  let xmin = 0, ymin = 0, xmax = 0, ymax = 0;
+
+  // Handle [ymin, xmin, ymax, xmax] array format (e.g. normalized Gemini/YOLO coordinates)
+  if (Array.isArray(box) && box.length >= 4) {
+    ymin = Number(box[0]) || 0;
+    xmin = Number(box[1]) || 0;
+    ymax = Number(box[2]) || 0;
+    xmax = Number(box[3]) || 0;
+
+    if (ymin > 1 || xmin > 1 || ymax > 1 || xmax > 1) {
+      ymin /= 1000;
+      xmin /= 1000;
+      ymax /= 1000;
+      xmax /= 1000;
+    }
+    const x = Math.max(0, Math.min(0.92, xmin));
+    const y = Math.max(0, Math.min(0.92, ymin));
+    const w = Math.max(0.04, Math.min(0.35, Math.max(0.04, xmax - xmin)));
+    const h = Math.max(0.06, Math.min(0.48, Math.max(0.06, ymax - ymin)));
+    return { x, y, w, h };
+  }
+
+  // Handle object with { ymin, xmin, ymax, xmax }
+  if (typeof box === 'object' && 'ymin' in box && 'xmin' in box && 'ymax' in box && 'xmax' in box) {
+    ymin = Number(box.ymin) || 0;
+    xmin = Number(box.xmin) || 0;
+    ymax = Number(box.ymax) || 0;
+    xmax = Number(box.xmax) || 0;
+
+    if (ymin > 1 || xmin > 1 || ymax > 1 || xmax > 1) {
+      ymin /= 1000;
+      xmin /= 1000;
+      ymax /= 1000;
+      xmax /= 1000;
+    }
+    const x = Math.max(0, Math.min(0.92, xmin));
+    const y = Math.max(0, Math.min(0.92, ymin));
+    const w = Math.max(0.04, Math.min(0.35, Math.max(0.04, xmax - xmin)));
+    const h = Math.max(0.06, Math.min(0.48, Math.max(0.06, ymax - ymin)));
+    return { x, y, w, h };
+  }
+
+  // Handle object with { x, y, w, h }
+  if (typeof box === 'object' && 'x' in box && 'y' in box) {
+    let x = Number(box.x) || 0;
+    let y = Number(box.y) || 0;
+    let w = Number(box.w) || 0;
+    let h = Number(box.h) || 0;
+
+    if (x > 1 || y > 1 || w > 1 || h > 1) {
+      x /= 1000;
+      y /= 1000;
+      w /= 1000;
+      h /= 1000;
+    }
+
+    // Convert xmax/ymax to width/height if w/h were passed as endpoints
+    if (w > x && x + w > 1.05) {
+      w = w - x;
+    }
+    if (h > y && y + h > 1.05) {
+      h = h - y;
+    }
+
+    x = Math.max(0, Math.min(0.92, x));
+    y = Math.max(0, Math.min(0.92, y));
+    w = Math.max(0.04, Math.min(0.35, w));
+    h = Math.max(0.06, Math.min(0.48, h));
+
+    return { x, y, w, h };
+  }
+
+  return { x: 0.1, y: 0.1, w: 0.12, h: 0.25 };
+}
+
 export function calculateIoU(boxA: BoundingBox, boxB: BoundingBox): number {
-  const xA = Math.max(boxA.x, boxB.x);
-  const yA = Math.max(boxA.y, boxB.y);
-  const xB = Math.min(boxA.x + boxA.w, boxB.x + boxB.w);
-  const yB = Math.min(boxA.y + boxA.h, boxB.y + boxB.h);
+  if (!boxA || !boxB) return 0;
+
+  const rA = convertBoxToRect(boxA);
+  const rB = convertBoxToRect(boxB);
+
+  const xA = Math.max(rA.x, rB.x);
+  const yA = Math.max(rA.y, rB.y);
+  const xB = Math.min(rA.x + rA.w, rB.x + rB.w);
+  const yB = Math.min(rA.y + rA.h, rB.y + rB.h);
 
   const interArea = Math.max(0, xB - xA) * Math.max(0, yB - yA);
-  const boxAArea = boxA.w * boxA.h;
-  const boxBArea = boxB.w * boxB.h;
+  const areaA = rA.w * rA.h;
+  const areaB = rB.w * rB.h;
 
-  const unionArea = boxAArea + boxBArea - interArea;
+  const unionArea = areaA + areaB - interArea;
   return unionArea > 0 ? interArea / unionArea : 0;
 }
 

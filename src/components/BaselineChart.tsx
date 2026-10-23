@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Cow } from '../types';
-import { AlertTriangle, Info, TrendingDown, Eye } from 'lucide-react';
+import { Info, Eye } from 'lucide-react';
 
 interface BaselineChartProps {
   cow: Cow;
@@ -64,29 +64,29 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
   const warnEndX = padding.left + chartWidth;
 
   return (
-    <div className="bg-[#121a16] border border-[#23332b] rounded-xl p-5 text-neutral-200">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-[#23332b]">
+    <div className="bg-white dark:bg-[#121a16] border border-neutral-200 dark:border-[#23332b] rounded-xl p-5 text-neutral-800 dark:text-neutral-200 transition-colors shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-neutral-200 dark:border-[#23332b]">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs uppercase tracking-wider text-emerald-400 font-semibold">
+            <span className="text-xs uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-semibold">
               Cow #{cow.tagNumber} ({cow.name})
             </span>
-            <span className="text-neutral-500">·</span>
-            <span className="text-xs text-neutral-400">14-Day Rolling Baseline vs Today</span>
+            <span className="text-neutral-400 dark:text-neutral-500">·</span>
+            <span className="text-xs text-neutral-500 dark:text-neutral-400">14-Day Rolling Baseline vs Today</span>
           </div>
-          <h3 className="text-sm font-bold text-white mt-0.5">
+          <h3 className="text-sm font-bold text-neutral-900 dark:text-white mt-0.5">
             Early Warning: Rumination (Lead) vs Milk (Lag)
           </h3>
         </div>
 
         {/* Metric tabs */}
-        <div className="flex items-center gap-1 p-1 bg-[#0c120f] border border-[#23332b] rounded-lg">
+        <div className="flex items-center gap-1 p-1 bg-neutral-100 dark:bg-[#0c120f] border border-neutral-200 dark:border-[#23332b] rounded-lg">
           <button
             onClick={() => setSelectedMetric('lead_vs_lag')}
             className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer ${
               selectedMetric === 'lead_vs_lag'
-                ? 'bg-[#1e2e25] text-white shadow-sm'
-                : 'text-neutral-400 hover:text-white'
+                ? 'bg-white dark:bg-[#1e2e25] text-neutral-900 dark:text-white shadow-sm'
+                : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
             }`}
           >
             Rumination vs Milk
@@ -95,8 +95,8 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
             onClick={() => setSelectedMetric('feed_vs_rumination')}
             className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer ${
               selectedMetric === 'feed_vs_rumination'
-                ? 'bg-[#1e2e25] text-white shadow-sm'
-                : 'text-neutral-400 hover:text-white'
+                ? 'bg-white dark:bg-[#1e2e25] text-neutral-900 dark:text-white shadow-sm'
+                : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
             }`}
           >
             Feed & Rumination
@@ -105,8 +105,8 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
             onClick={() => setSelectedMetric('all')}
             className={`px-2.5 py-1 text-xs font-medium rounded-md transition-colors cursor-pointer ${
               selectedMetric === 'all'
-                ? 'bg-[#1e2e25] text-white shadow-sm'
-                : 'text-neutral-400 hover:text-white'
+                ? 'bg-white dark:bg-[#1e2e25] text-neutral-900 dark:text-white shadow-sm'
+                : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
             }`}
           >
             All 3 Metrics
@@ -134,7 +134,7 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
           <text
             x={warnStartX + 10}
             y={padding.top + 18}
-            fill="#fbbf24"
+            fill="#d97706"
             fontSize="10"
             fontWeight="700"
             letterSpacing="1"
@@ -144,7 +144,7 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
           <text
             x={warnStartX + 10}
             y={padding.top + 32}
-            fill="#9ca3af"
+            fill="#6b7280"
             fontSize="9"
           >
             Rumination falls while milk remains flat
@@ -160,7 +160,8 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
                   y1={y}
                   x2={width - padding.right}
                   y2={y}
-                  stroke={pct === 100 ? '#374151' : '#1f2937'}
+                  stroke={pct === 100 ? '#9ca3af' : '#e5e7eb'}
+                  className="dark:stroke-[#26352c]"
                   strokeDasharray={pct === 100 ? undefined : '3 3'}
                   strokeWidth="1"
                 />
@@ -168,7 +169,7 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
                   x={padding.left - 8}
                   y={y + 3}
                   textAnchor="end"
-                  fill={pct === 100 ? '#9ca3af' : '#6b7280'}
+                  fill={pct === 100 ? '#4b5563' : '#9ca3af'}
                   fontSize="9"
                   fontFamily="JetBrains Mono"
                 >
@@ -183,7 +184,7 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
             x={width - padding.right}
             y={padding.top + chartHeight - ((100 - 50) / 70) * chartHeight - 4}
             textAnchor="end"
-            fill="#6ee7b7"
+            fill="#059669"
             fontSize="9"
             fontWeight="600"
           >
@@ -201,7 +202,7 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
                 x={x}
                 y={height - padding.bottom + 18}
                 textAnchor="middle"
-                fill="#9ca3af"
+                fill="#6b7280"
                 fontSize="9"
                 fontFamily="JetBrains Mono"
               >
@@ -215,7 +216,7 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
             <path
               d={feedPath}
               fill="none"
-              stroke="#38bdf8"
+              stroke="#0284c7"
               strokeWidth="2.5"
               strokeLinecap="round"
             />
@@ -226,7 +227,7 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
             <path
               d={ruminationPath}
               fill="none"
-              stroke="#f59e0b"
+              stroke="#d97706"
               strokeWidth="3"
               strokeLinecap="round"
             />
@@ -237,7 +238,7 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
             <path
               d={milkPath}
               fill="none"
-              stroke="#10b981"
+              stroke="#059669"
               strokeWidth="2.5"
               strokeDasharray="4 2"
               strokeLinecap="round"
@@ -251,8 +252,9 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
               cx={pt.x}
               cy={pt.y}
               r={i === ruminationPoints.length - 1 ? 5 : 3}
-              fill="#f59e0b"
-              stroke="#121a16"
+              fill="#d97706"
+              stroke="#ffffff"
+              className="dark:stroke-[#121a16]"
               strokeWidth="1.5"
             />
           ))}
@@ -265,8 +267,9 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
                 cx={pt.x}
                 cy={pt.y}
                 r={i === milkPoints.length - 1 ? 4 : 2.5}
-                fill="#10b981"
-                stroke="#121a16"
+                fill="#059669"
+                stroke="#ffffff"
+                className="dark:stroke-[#121a16]"
                 strokeWidth="1"
               />
             ))}
@@ -274,29 +277,29 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
       </div>
 
       {/* Legend & Summary strip */}
-      <div className="mt-3 pt-3 border-t border-[#23332b] flex flex-wrap items-center justify-between gap-4 text-xs">
+      <div className="mt-3 pt-3 border-t border-neutral-200 dark:border-[#23332b] flex flex-wrap items-center justify-between gap-4 text-xs">
         <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
-            <span className="text-neutral-300 font-medium">Rumination Time (Lead)</span>
-            <span className="text-neutral-500 font-mono-numbers">
+            <span className="text-neutral-800 dark:text-neutral-300 font-medium">Rumination Time (Lead)</span>
+            <span className="text-neutral-500 dark:text-neutral-400 font-mono-numbers">
               {cow.today.ruminationTime}m ({cow.scoring.ruminationVariancePercent}%)
             </span>
           </div>
 
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-emerald-500 inline-block border-t border-dashed border-emerald-400"></span>
-            <span className="text-neutral-300 font-medium">Milk Yield (Lag)</span>
-            <span className="text-neutral-500 font-mono-numbers">
+            <span className="w-3 h-0.5 bg-emerald-600 dark:bg-emerald-500 inline-block border-t border-dashed border-emerald-400"></span>
+            <span className="text-neutral-800 dark:text-neutral-300 font-medium">Milk Yield (Lag)</span>
+            <span className="text-neutral-500 dark:text-neutral-400 font-mono-numbers">
               {cow.today.milkYield}L ({cow.scoring.milkVariancePercent > 0 ? '+' : ''}{cow.scoring.milkVariancePercent}%)
             </span>
           </div>
 
           {(selectedMetric === 'feed_vs_rumination' || selectedMetric === 'all') && (
             <div className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 bg-sky-400 inline-block"></span>
-              <span className="text-neutral-300 font-medium">Feed Intake Time</span>
-              <span className="text-neutral-500 font-mono-numbers">
+              <span className="w-3 h-0.5 bg-sky-600 dark:bg-sky-400 inline-block"></span>
+              <span className="text-neutral-800 dark:text-neutral-300 font-medium">Feed Intake Time</span>
+              <span className="text-neutral-500 dark:text-neutral-400 font-mono-numbers">
                 {cow.today.feedingTime}m ({cow.scoring.feedVariancePercent}%)
               </span>
             </div>
@@ -306,7 +309,7 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
         {onRunVideoAnalysis && (
           <button
             onClick={() => onRunVideoAnalysis(cow.tagNumber)}
-            className="flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 font-semibold px-2.5 py-1 rounded bg-[#1b2b23] border border-[#2d483b] transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-semibold px-2.5 py-1 rounded bg-emerald-50 dark:bg-[#1b2b23] border border-emerald-200 dark:border-[#2d483b] transition-colors cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5" /> Launch AI Video Tracker
           </button>
@@ -314,11 +317,11 @@ export const BaselineChart: React.FC<BaselineChartProps> = ({ cow, onRunVideoAna
       </div>
 
       {/* Slide takeaway callout */}
-      <div className="mt-3 p-3 bg-[#18231e] rounded-lg border border-[#2b3d33] flex items-start gap-2.5 text-xs text-neutral-300">
-        <Info className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+      <div className="mt-3 p-3 bg-emerald-50/60 dark:bg-[#18231e] rounded-lg border border-emerald-200 dark:border-[#2b3d33] flex items-start gap-2.5 text-xs text-neutral-700 dark:text-neutral-300">
+        <Info className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
         <div>
-          <span className="font-semibold text-neutral-100">ONSPOT Veterinary Principle: </span>
-          Notice that milk yield has NOT dropped significantly yet (<span className="text-emerald-400 font-mono-numbers">{cow.today.milkYield}L vs {cow.baseline.milkYieldMean}L</span>), but rumination time dropped by <span className="text-amber-400 font-mono-numbers font-semibold">{Math.abs(cow.scoring.ruminationVariancePercent)}%</span>. This provides a 48–72 hour early warning window to inspect the cow before acute clinical sickness drops the milk yield permanently.
+          <span className="font-semibold text-neutral-900 dark:text-neutral-100">ONSPOT Veterinary Principle: </span>
+          Notice that milk yield has NOT dropped significantly yet (<span className="text-emerald-700 dark:text-emerald-400 font-mono-numbers">{cow.today.milkYield}L vs {cow.baseline.milkYieldMean}L</span>), but rumination time dropped by <span className="text-amber-600 dark:text-amber-400 font-mono-numbers font-semibold">{Math.abs(cow.scoring.ruminationVariancePercent)}%</span>. This provides a 48–72 hour early warning window to inspect the cow before acute clinical sickness drops the milk yield permanently.
         </div>
       </div>
     </div>

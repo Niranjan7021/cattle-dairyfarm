@@ -21,6 +21,9 @@ import { CowRegisterModal } from './components/CowRegisterModal';
 import { CowDetailModal } from './components/CowDetailModal';
 import { NotificationDrawer } from './components/NotificationDrawer';
 import { SMSAlertToast } from './components/SMSAlertToast';
+import { sendActualSMS } from './utils/smsService';
+
+import { subscribeToAuth, testFirestoreConnection } from './lib/firebase';
 
 export default function App() {
   // Current user (defaults to null so user lands on Login/Register page first)
@@ -62,6 +65,26 @@ export default function App() {
 
   // Pre-selected cow for Video Analyzer
   const [videoTargetTag, setVideoTargetTag] = useState<string>('0412');
+
+  // Verify Firestore connection and listen for Firebase Auth state changes
+  useEffect(() => {
+    testFirestoreConnection();
+
+    const unsubscribe = subscribeToAuth((fbUser) => {
+      if (fbUser) {
+        const loggedUser: User = {
+          id: fbUser.uid,
+          name: fbUser.displayName || 'Dairy Farmer',
+          phone: fbUser.email || '+91 9876543210',
+          organization: 'Firebase Authenticated Farm',
+          role: 'farmer',
+        };
+        setCurrentUser(loggedUser);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // Save changes to localStorage
   useEffect(() => {
@@ -147,9 +170,11 @@ export default function App() {
 
   // Trigger SMS Alert when a cow is affected (sent directly to the owner's mobile number)
   const handleSendManualSmsAlert = (cow: Cow, customReason?: string) => {
-    const recipientPhone = currentUser?.phone || '+1 (555) 382-9014';
+    const recipientPhone = currentUser?.phone || '+91 9876543210';
     const recipientName = currentUser?.name || 'Dairy Farm Owner';
     const reasonText = customReason ? ` Observation: ${customReason}.` : '';
+
+    const alertMessage = `Cow #${cow.tagNumber} (${cow.name}) is affected! Rumination: ${cow.scoring.ruminationVariancePercent}%, Feed: ${cow.scoring.feedVariancePercent}%. Risk Score: ${cow.scoring.combinedRiskIndex}/100. Action: ${cow.scoring.suggestedAction}.${reasonText}`;
 
     const newAlert: NotificationAlert = {
       id: `notif-${Date.now()}`,
@@ -158,7 +183,7 @@ export default function App() {
       recipientName,
       cowTag: cow.tagNumber,
       title: `Affected Cow Alert: #${cow.tagNumber} (${cow.name})`,
-      message: `[HERDSENTINEL SMS TO OWNER ${recipientPhone}] Cow #${cow.tagNumber} (${cow.name}) is affected! Rumination variance: ${cow.scoring.ruminationVariancePercent}%, Feed variance: ${cow.scoring.feedVariancePercent}%. Milk yield: ${cow.today.milkYield}L (baseline ${cow.baseline.milkYieldMean}L). Risk Index: ${cow.scoring.combinedRiskIndex}/100. Action required: ${cow.scoring.suggestedAction}.${reasonText} (Non-diagnostic early warning aid).`,
+      message: `[HERDSENTINEL SMS TO OWNER ${recipientPhone}] ${alertMessage}`,
       timestamp: `Today at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
       status: 'delivered',
       priority: cow.scoring.priority,
@@ -168,26 +193,46 @@ export default function App() {
     setNotifications((prev) => [newAlert, ...prev]);
     setActiveSmsToast(newAlert);
     playNotificationChime('urgent');
+
+    // Trigger actual backend/device SMS dispatch
+    sendActualSMS({
+      recipientPhone,
+      recipientName,
+      message: alertMessage,
+      cowTag: cow.tagNumber,
+    });
   };
 
   // Dispatch SMS for all affected cows to owner's mobile
   const handleSendSmsAlertToAll = (affectedCows: Cow[]) => {
-    const recipientPhone = currentUser?.phone || '+1 (555) 382-9014';
+    const recipientPhone = currentUser?.phone || '+91 9876543210';
     const recipientName = currentUser?.name || 'Dairy Farm Owner';
 
-    const newAlerts: NotificationAlert[] = affectedCows.map((cow, idx) => ({
-      id: `notif-${Date.now()}-${idx}`,
-      type: 'early_warning',
-      recipientPhone,
-      recipientName,
-      cowTag: cow.tagNumber,
-      title: `Affected Cow Alert: #${cow.tagNumber} (${cow.name})`,
-      message: `[HERDSENTINEL SMS TO OWNER ${recipientPhone}] Cow #${cow.tagNumber} (${cow.name}) is affected. Rumination variance: ${cow.scoring.ruminationVariancePercent}% · Feed intake variance: ${cow.scoring.feedVariancePercent}%. Risk Score: ${cow.scoring.combinedRiskIndex}/100. Action: ${cow.scoring.suggestedAction}. (Non-diagnostic aid).`,
-      timestamp: `Today at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
-      status: 'delivered',
-      priority: cow.scoring.priority,
-      read: false,
-    }));
+    const newAlerts: NotificationAlert[] = affectedCows.map((cow, idx) => {
+      const alertMsg = `Cow #${cow.tagNumber} (${cow.name}) is affected. Rumination: ${cow.scoring.ruminationVariancePercent}% · Feed intake: ${cow.scoring.feedVariancePercent}%. Risk Score: ${cow.scoring.combinedRiskIndex}/100. Action: ${cow.scoring.suggestedAction}.`;
+      
+      // Dispatch actual SMS
+      sendActualSMS({
+        recipientPhone,
+        recipientName,
+        message: alertMsg,
+        cowTag: cow.tagNumber,
+      });
+
+      return {
+        id: `notif-${Date.now()}-${idx}`,
+        type: 'early_warning',
+        recipientPhone,
+        recipientName,
+        cowTag: cow.tagNumber,
+        title: `Affected Cow Alert: #${cow.tagNumber} (${cow.name})`,
+        message: `[HERDSENTINEL SMS TO OWNER ${recipientPhone}] ${alertMsg}`,
+        timestamp: `Today at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+        status: 'delivered',
+        priority: cow.scoring.priority,
+        read: false,
+      };
+    });
 
     setNotifications((prev) => [...newAlerts, ...prev]);
     if (newAlerts.length > 0) {
@@ -257,7 +302,7 @@ export default function App() {
   // If user selected login tab OR no user is logged in, show dedicated Login / Register Page
   if (currentTab === 'login' || !currentUser) {
     return (
-      <div className="min-h-screen bg-[#070b09] flex flex-col font-sans selection:bg-emerald-600 selection:text-white">
+      <div className="min-h-screen bg-[var(--bg-app)] text-[var(--text-primary)] flex flex-col font-sans selection:bg-emerald-600 selection:text-white transition-colors">
         <Navigation
           currentTab="login"
           setCurrentTab={setCurrentTab}
@@ -286,7 +331,7 @@ export default function App() {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <div className="min-h-screen bg-[#0a0f0d] text-neutral-100 flex flex-col font-sans selection:bg-emerald-600 selection:text-white">
+    <div className="min-h-screen bg-[var(--bg-app)] text-[var(--text-primary)] flex flex-col font-sans selection:bg-emerald-600 selection:text-white transition-colors">
       {/* Top Navigation */}
       <Navigation
         currentTab={currentTab}
@@ -417,10 +462,10 @@ export default function App() {
       />
 
       {/* Footer */}
-      <footer className="mt-12 py-6 border-t border-[#1d2b23] bg-[#0c120f] text-xs text-neutral-500">
+      <footer className="mt-12 py-6 border-t border-neutral-200 dark:border-[#1d2b23] bg-white dark:bg-[#0c120f] text-xs text-neutral-600 dark:text-neutral-500 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-neutral-400">HerdSentinel</span>
+            <span className="font-semibold text-neutral-800 dark:text-neutral-400">HerdSentinel</span>
             <span>·</span>
             <span>ONSPOT Computer Vision & Deep Learning Early-Warning Tool</span>
           </div>

@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Catch-All Safety Net: Deny all unauthenticated or unlisted reads/writes by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper Functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 1. User Profiles Collection
+    match /users/{userId} {
+      allow get, list: if isSignedIn();
+      allow create, update: if isOwner(userId);
+      allow delete: if false;
+    }
+
+    // 2. Herd Directory Cows Collection
+    match /cows/{cowTag} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isSignedIn();
+
+      // Subcollection: Milk Records
+      match /milkRecords/{recordId} {
+        allow read, write: if isSignedIn();
+      }
+    }
+
+    // 3. Automated SMS Health Alerts Collection
+    match /alerts/{alertId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+  }
+}
