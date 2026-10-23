@@ -1,0 +1,6 @@
+{
+  "name": "HerdSentinel - Dairy Cattle Early-Warning Tool",
+  "description": "AI-based non-invasive cow feeding, rumination and milk monitoring system detecting health variances before milk yields drop.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
